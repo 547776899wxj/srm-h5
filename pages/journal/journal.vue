@@ -141,7 +141,8 @@ export default {
 				return false;
 			}
 			// 测试使用
-			// let res = {data:{"reload":"true","Data":"<record><column  name=\"count_no\" value=\"17\"><dept><deptName>急诊科(病区)</deptName><bedNum>17</bedNum></dept></column><column  name=\"mov_bed\" value=\"\"><dept><deptName></deptName><bedNum> 20迁18</bedNum></dept></column><column  name=\"count_critical\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>6、3、5、1、2、4</bedNum></dept></column><column  name=\"count_in_out\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>6、15、5、1、2、4</bedNum></dept></column><column  name=\"count_pee\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>3</bedNum></dept></column><column  name=\"count_bedsore\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>5、4</bedNum></dept></column><column  name=\"custody\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>6、3、7、5、4、1、2、15</bedNum></dept></column><column  name=\"count_falling\" value=\"\"><dept><deptName></deptName><bedNum>19、3、5、6</bedNum></dept></column><column  name=\"remarks\" value=\"\"><dept><deptName></deptName><bedNum>总值班护士长：郑剑珍\n值班医生：王榕\n</bedNum></dept></column><column  name=\"division\" value=\"\"><dept><deptName></deptName><bedNum></bedNum></dept></column><column  name=\"chemotherapy\" value=\"\"></column><column  name=\"tomorrow_chemotherapy\" value=\"\"></column><column  name=\"pipeLine\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>19、4、5、10、2</bedNum></dept></column><column  name=\"mov_out\" value=\"\"><dept><deptName>消化内镜(病区)</deptName><bedNum>8</bedNum></dept></column></record>","ServerTime":"2020-11-26 09:59:52"}}
+			// let res = {data:{"reload":"false","Data":"<record><column  name=\"count_no\" value=\"14\"><dept><deptName>急诊科(病区)</deptName><bedNum>11</bedNum></dept><dept><deptName>肛肠一科(病区)</deptName><bedNum>3</bedNum></dept></column><column  name=\"today_in\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>13</bedNum></dept></column><column  name=\"today_out\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>6</bedNum></dept></column><column  name=\"mov_bed\" value=\"\"><dept><deptName></deptName><bedNum> 5迁10</bedNum></dept></column><column  name=\"count_critical\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>4、1、2</bedNum></dept></column><column  name=\"count_in_out\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>4、10、1、2</bedNum></dept></column><column  name=\"count_bedsore\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>19、8、2、4</bedNum></dept></column><column  name=\"custody\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>4、2、7、10、1</bedNum></dept></column><column  name=\"count_falling\" value=\"\"><dept><deptName></deptName><bedNum>1、2、4、5、7、8</bedNum></dept></column><column  name=\"remarks\" value=\"\"><dept><deptName></deptName><bedNum>总值班护士长：张琼\n值班医生：王榕\n</bedNum></dept></column><column  name=\"division\" value=\"\"><dept><deptName></deptName><bedNum></bedNum></dept></column><column  name=\"chemotherapy\" value=\"\"></column><column  name=\"tomorrow_chemotherapy\" value=\"\"></column><column  name=\"pipeLine\" value=\"\"><dept><deptName>急诊科(病区)</deptName><bedNum>4、2、7、8、1</bedNum></dept></column></record>","ServerTime":"2021-02-22 16:43:47"}}
+			
 			uni.request({
 				url: 'http://129.1.20.21:8019/Queue/getQueryNursingDate',
 				// url: 'http://192.168.0.164:8019/Queue/getQueryNursingDate',
@@ -196,6 +197,7 @@ export default {
 						}catch(e){
 							bedNum = '';
 						}
+						console.log(item);
 						switch(item._name) {
 							case 'count_no':
 								let total = 0;
@@ -209,25 +211,25 @@ export default {
 									text.push(item.dept.deptName + item.dept.bedNum)
 									total += +item.dept.bedNum
 								}
-								this.data[0] ='总数：'+total+'：'+text.join("、");
+								this.data[0] ='总数：'+total+'：'+text.join("，");
 								break;
 							case 'today_in':
-							   this.data[1] = (item.dept.deptName||'') + bedNum;
+								this.data[1] = this.itemArray(item).join("，");
 								break;
 							case 'mov_in':
-							   this.data[2] = (item.dept.deptName||'') + bedNum;
+							   this.data[2] = this.itemArray(item).join("，");
 								break;
 							case 'today_out':
-							   this.data[3] = (item.dept.deptName||'') + bedNum;
+							   this.data[3] = this.itemArray(item).join("，");
 								break;
 							case 'mov_out':
-							   this.data[4] = (item.dept.deptName||'') + bedNum;
+							   this.data[4] = this.itemArray(item).join("，");
 								break;
 							case 'tomorrow_out':
-							   this.data[5] = (item.dept.deptName||'') + bedNum;
+							   this.data[5] = this.itemArray(item).join("，");
 								break;
 							case 'mov_room':
-							   this.data[6] = (item.dept.deptName||'') + bedNum;
+							   this.data[6] = this.itemArray(item).join("，");
 								break;
 							case 'count_OPS':
 							   this.data[7] = bedNum
@@ -258,7 +260,6 @@ export default {
 								break;
 						} 
 					})
-					
 				},
 				fail: res => {
 					uni.showToast({
@@ -272,6 +273,17 @@ export default {
 				}
 			});
 		},
+		itemArray(item){
+			let text = [];
+			if(item.dept instanceof Array){
+				item.dept.forEach((dept)=>{
+					text.push(dept.deptName + dept.bedNum);
+				})
+			}else{
+				text.push((item.dept.deptName||'') + (item.dept.bedNum || '')) ;
+			}
+			return text;
+		}
 		
 	}
 };

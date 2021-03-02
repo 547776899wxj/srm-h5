@@ -103,19 +103,19 @@
 			},
 			init(){
 				// let res = {data:{"reload":"false",
-				// "audioList":[
-				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"内镜一","cliniqueCode":"5","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"eee1","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":'下午',"status":null},
-				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"tt1","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":'下午',"status":null},
-				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"内镜一","cliniqueCode":"5","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"eee2","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":'下午',"status":null},
-				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"tt2","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":'下午',"status":null}
-				// ],
+				// "audioList":[{"deptCode": null,"deptName": null,"cliniqueName": "电子喉镜","cliniqueCode": "1","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": null,"callingSeq": null,"callingPreTime": null,"waiting": null,"waitingSeq": null,"waitingPreTime": null,"amPm": null,"status": null,"isReCall": null},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "中医治疗","cliniqueCode": "747","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "唐凤珍","callingSeq": "2014","callingPreTime": "2021-02-01 16:19:40","waiting": "李嘉妮","waitingSeq": "2015","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "3"},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "耳内镜、鼻内镜","cliniqueCode": "6","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "林洪燕","callingSeq": "4020","callingPreTime": "2021-02-01 15:57:02","waiting": "林洪燕","waitingSeq": "4020","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "1"}],
 				// "Data":[
 				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"内镜一","cliniqueCode":"5","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"eee","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":'下午',"status":null},
 				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"tt","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":'下午',"status":null}
 				// ],
 				// "ServerTime":"2021-01-15 13:00:07"},
 				// }
-				// res.data.audioList[0].isReCall = this.testNumber++;
+				// // res.data.audioList[0].isReCall = this.testNumber++;
+				// if(this.testNumber++ > 1){
+				// 	console.log("测试");
+				// 	res.data.audioList = [{"deptCode": null,"deptName": null,"cliniqueName": "电子喉镜","cliniqueCode": "1","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": null,"callingSeq": null,"callingPreTime": null,"waiting": null,"waitingSeq": null,"waitingPreTime": null,"amPm": null,"status": null,"isReCall": null},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "中医治疗","cliniqueCode": "747","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "唐凤珍","callingSeq": "2014","callingPreTime": "2021-02-01 16:21:33","waiting": "李嘉妮","waitingSeq": "2015","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "4"},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "耳内镜、鼻内镜","cliniqueCode": "6","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "林洪燕","callingSeq": "4020","callingPreTime": "2021-02-01 15:57:02","waiting": "林洪燕","waitingSeq": "4020","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "1"}]
+				// }; 
+				
 				//测试----------------------------------------------------------------------------------------------------------------------------------------
 				
 				uni.request({	
@@ -159,12 +159,12 @@
 										}
 									})
 								}
-								dataAudioList = dataAudioList.concat({
-									callingSeq: item.callingSeq || '',
-									isRecall: isRecall,
-									isisReCallNumber:item.isReCall,
-								});
-								if(item.calling){
+								if(item.callingSeq){
+									dataAudioList = dataAudioList.concat({
+										callingSeq: item.callingSeq || '',
+										isRecall: isRecall,
+										isisReCallNumber:item.isReCall,
+									});
 									let number = this.$util.chineseNumeral(item.calling+'');
 									let speakText = `请,${item.callingSeq},${item.calling},到${item.cliniqueName}就诊`;
 									if(this.audioList.length==0){
