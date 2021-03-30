@@ -93,15 +93,11 @@
 			// 关闭设置
 			close(){
 				this.popupShow = false;
-				if (this.iType ) {
-					this.init();
-				}
 			},
 			//确定设置
 			confirm(res) {
 				this.playSound = res.playSound;
 				this.popupShow = false;
-				this.init();
 			},
 			init(){
 				// let res = {data:{"reload":"false",

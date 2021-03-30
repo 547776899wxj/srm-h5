@@ -19,6 +19,15 @@
 			}
         },
 		{
+		    "path" : "pages/clinic/anaesthesia",
+		    "style" : {
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				}
+			}
+		},
+		{
 		    "path" : "pages/check/check",
 		    "style" : {
 				"navigationBarTitleText": "",

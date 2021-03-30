@@ -1,46 +1,30 @@
 <template>
-	<view>
-		<view class="content"  @longpress="open" @click="open">
-			<image class="bg" src="/static/nosethroat.png" ></image>
-			<view class="header">
-				<view class="header-time">
-					<view class="pr-15">
-						<text>{{ dateText.year }}年{{ dateText.month }}月{{ dateText.date }}日</text>
-					</view>
-					<view >
-						<text>{{dateText.day}} {{ dateText.time }}</text>
-					</view>
+	<view class="content"  @longpress="open" @click="open">
+		<image class="bg" src="/static/clinic.png" ></image>
+		<view class="header">
+			<view class="header-title">{{title}}</view>
+			<view class="header-time">
+				<view>
+					<text>{{ dateText.year }}年{{ dateText.month }}月{{ dateText.date }}日</text>
+				</view>
+				<view>
+					<text class="pr-15">{{ dateText.day }}</text>
+					<text>{{ dateText.time }}</text>
 				</view>
 			</view>
-			<view class="data">
-				<view class="data-item" v-for="(item,index) in data" :key="index">
-					<view class="title">
-						{{item.cliniqueName}}
-					</view>
-					<view class="data-details">
-						<view class="seeing">
-							<view class="details-title">
-								正在就诊：
-							</view>
-							<view class="details-content">
-								<text class="pr-30">{{item.callingSeq}}</text>
-								<text>{{item.calling}}</text>
-							</view>
-						</view>
-						<view class="waiting">
-							<view class="details-title">
-								等待就诊：
-							</view>
-							<view class="details-content">
-								<text class="pr-30">{{item.waitingSeq}}</text>
-								<text>{{item.waiting}}</text>
-							</view>
-						</view>
-					</view>
+		</view>
+		<view class="info">
+			<view class="info-patient" v-for="(item,index) in data" :key="index">
+				<view class="room">{{item.cliniqueName}}</view>
+				<!-- <view class="doctor">{{item.doctor}}</view> -->
+				<view class="seeing" style="color: #ffa500; padding-left: 100px;">
+					<text class="pr-15" v-show="item.callingSeq">{{item.callingSeq}}号</text>
+					<text class="pl-15">{{item.calling}}</text>
 				</view>
-			</view>
-			<view class="footer">
-				感谢您的耐心等候！
+				<view class="seeing" style="padding-left: 60px;">
+					<text class="pr-15" v-show="item.waitingSeq">{{item.waitingSeq}}号</text>
+					<!-- <text class="pl-15">{{item.waiting}}</text> -->
+				</view>
 			</view>
 		</view>
 		<popupSet ref="popupSet" @confirm="confirm" iTypeText="诊室" @close="close" :dataInit="dataPopup"></popupSet>
@@ -48,12 +32,13 @@
 </template>
 
 <script>
-	import popupSet from '../../components/popup-set/popup-set.vue';
-	export default {
+import popupSet from '../../components/popup-set/popup-set.vue';
+export default {
 		components: { popupSet },
 		data() {
 			return {
 				iType:'',
+				title:'',
 				screenNumber:'',
 				popupShow:false,
 				dateText: {
@@ -90,32 +75,32 @@
 			// 关闭设置
 			close(){
 				this.popupShow = false;
-				
 			},
 			//确定设置
 			confirm(res) {
 				this.iType = res.iType;
 				this.screenNumber = res.screenNumber;
 				this.popupShow = false;
-				
 			},
 			init(){
 				
 				// let res = {data:{"reload":"false",
 				// "audioList":[{"deptCode": null,"deptName": null,"cliniqueName": "电子喉镜","cliniqueCode": "1","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": null,"callingSeq": null,"callingPreTime": null,"waiting": null,"waitingSeq": null,"waitingPreTime": null,"amPm": null,"status": null,"isReCall": null},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "中医治疗","cliniqueCode": "747","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "唐凤珍","callingSeq": "2014","callingPreTime": "2021-02-01 16:19:40","waiting": "李嘉妮","waitingSeq": "2015","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "3"},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "耳内镜、鼻内镜","cliniqueCode": "6","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "林洪燕","callingSeq": "4020","callingPreTime": "2021-02-01 15:57:02","waiting": "林洪燕","waitingSeq": "4020","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "1"}],
 				// "Data":[
-				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"内镜一","cliniqueCode":"5","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"eee","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":'下午',"status":null},
-				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":null,"doctorPic":null,"introduction":null,"calling":"tt","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":'下午',"status":null}
+				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"内镜一","cliniqueCode":"5","techTitle":null,"doctor":"吴先杰","doctorPic":null,"introduction":null,"calling":"eee","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":'下午',"status":null},
+				// {"isReCall":0,"deptCode":"2199","deptName":"耳鼻喉科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":"我先杰","doctorPic":null,"introduction":null,"calling":"tt","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":'下午',"status":null}
 				// ],
 				// "ServerTime":"2021-01-15 13:00:07"},
 				// }
-				// // res.data.audioList[0].isReCall = this.testNumber++;
+				
+				// res.data.audioList[0].isReCall = this.testNumber++;
 				// if(this.testNumber++ > 1){
 				// 	console.log("测试");
 				// 	res.data.audioList = [{"deptCode": null,"deptName": null,"cliniqueName": "电子喉镜","cliniqueCode": "1","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": null,"callingSeq": null,"callingPreTime": null,"waiting": null,"waitingSeq": null,"waitingPreTime": null,"amPm": null,"status": null,"isReCall": null},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "中医治疗","cliniqueCode": "747","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "唐凤珍","callingSeq": "2014","callingPreTime": "2021-02-01 16:21:33","waiting": "李嘉妮","waitingSeq": "2015","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "4"},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "耳内镜、鼻内镜","cliniqueCode": "6","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "林洪燕","callingSeq": "4020","callingPreTime": "2021-02-01 15:57:02","waiting": "林洪燕","waitingSeq": "4020","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "1"}]
 				// }; 
 				
-				//测试----------------------------------------------------------------------------------------------------------------------------------------
+				// 测试----------------------------------------------------------------------------------------------------------------------------------------
+				
 				
 				uni.request({	
 					url: 'http://129.1.20.21:8019/Queue/getNosethroat',
@@ -144,6 +129,7 @@
 									callingSeq: item.callingSeq || '',
 									waiting: waiting,
 									waitingSeq: item.waitingSeq || '',
+									doctor: item.doctor || '',
 								});
 								
 							})
@@ -221,7 +207,6 @@
 			// 语音队列
 			voiceQueue(){
 				let text = this.voiceData[0]; 
-				console.log(text);
 				this.$tui.webView.postMessage({
 					data: {
 						text:text
@@ -256,68 +241,132 @@
 				
 			},
 		}
-	}
+	
+};
 </script>
 
-<style lang="scss">
-.content{
-	width: 768px;
-	height: 1366px;
+<style>
+.pr-15{
+	padding-right: 15px;
 }
-.pr-30{
-	padding-right: 30px;
+.pl-15{
+	padding-left: 15px;
 }
-.footer{
-	font-size: 22px;
-	padding: 10px 60px;
-	font-weight: bold;
+page {
+	height: 100%;
 }
-.data{
-	height: 1172px;
-	.data-item{
-		height: 586px;
-		.title{
-			font-weight: bold;
-			font-size: 53px;
-			line-height: 90px;
-			padding-bottom: 10px;
-			text-align: center;
-		}
-		.data-details{
-			padding: 30px 60px;
-			color: #FFFFFF;
-			font-size: 52px;
-			.seeing{
-				padding-bottom: 30px;
-			}
-			.details-content{
-				line-height: 2;
-				text-align: center;
-			}
-		}
-		
-	}
+.uni-form-item.uni-form-btn{
+	padding: 0;
 }
-.bg {
-	width: 768px;
-	height: 1366px;
-	position: absolute;
-	z-index: -1;
+
+.chooseBtn{
+	font-size: 30px;
+	width: 438px;
 }
 .header{
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	height: 145px;
-	.header-time {
-		position: absolute;
-		right: 45px;
-		padding-top: 15px;
-	}
-	.header-time view {
-		font-size: 30px;
-		color: #000;
-	}
+	height: 118px;
 }
+.room{
+	width: 490px;
+}
+.doctor{
+	width: 420px;
+}
+.seeing{
+	width: 673px;
+	box-sizing: border-box;
+	
+}
+.content {
+	position: relative;
+	height: 100%;
+}
+
+.bg {
+	position: absolute;
+	height: 1080px;
+	width: 1920px;
+	z-index: -1;
+}
+.header-time {
+	display: flex;
+	position: absolute;
+	justify-content: center;
+	flex-direction: column;
+	right: 45px;
+	padding-top: 15px;
+	top: 0px;
+}
+.header-title{
+	color: rgb(253,250,7);
+	font-size: 63px;
+	font-weight: 800;
+	letter-spacing: 12px;
+}
+.header-time view {
+	font-size: 35px;
+	color: #000;
+	letter-spacing:5px;
+}
+.info{
+	padding-top: 121px;
+	padding-left: 35px;
+	padding-right: 35px;
+}
+.info-patient {
+	display: flex;
+	height: 200px;
+	justify-content: space-around;
+}
+.info-patient view {
+	font-size: 57px;
+	font-weight: bold;
+	color: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.popup-btn{
+		font-size: 30px;
+		color: #fff;
+		padding-left: 40px;
+		padding-right: 40px;
+		background-color: rgb(68,114,196);
+		margin-left: 40px;
+		margin-right: 40px;
+	}
+	.popup{
+		background-color: #fff;
+		width: 600px;
+		font-size: 40px;
+		z-index: 100;
+	}
+	.popup-header{
+		background-color: rgb(68,114,196);
+		text-align: center;
+		padding: 10px 0 ;
+	}
+	.uni-form-item{
+		display: flex;
+		align-items: center;
+		padding: 40px;
+		justify-content: center;
+	}
+	.popup-title{
+		font-size: 30px;
+	}
+	.uni-input{
+		font-size: 25px;
+		border: 1px solid;
+		padding: 20px 30px;
+	}
 </style>
+
