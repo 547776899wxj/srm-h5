@@ -1,0 +1,193 @@
+.info.bg_7{
+	font-size: 57px;
+	padding-top: 168px;
+	.info-patient{
+		height: 123px;
+		.room:first-child{
+			box-sizing: border-box;
+			padding-left: 20px;
+		}
+		.textRoom{
+			font-size: 40px;
+		}
+		.clinique{
+			width: 420px;
+		}
+		.seeing{
+			width: 510px;
+			
+		}
+		
+	
+	}
+}
+.textRoom{
+	white-space: inherit !important;
+	text-align: center !important;
+	font-size: 50px;
+}
+.info.bg_6{
+	font-size: 60px;
+	padding-top: 184px;
+	.info-patient{
+		height: 140px;
+		.room:first-child{
+			box-sizing: border-box;
+			padding-left: 20px;
+		}
+		.textRoom{
+			font-size: 43px;
+		}
+		.clinique{
+			width: 410px;
+		}
+		.seeing{
+			width: 520px;
+			
+		}
+		
+	
+	}
+}
+.info.bg_8{
+	font-size: 55px;
+	padding-top: 156px;
+	.info-patient{
+		height: 108px;
+		.room:first-child{
+			box-sizing: border-box;
+			padding-left: 20px;
+		}
+		.textRoom{
+			font-size: 37px;
+		}
+		.clinique{
+			width: 420px;
+		}
+		.seeing{
+			width: 510px;
+			
+		}
+	}
+}
+.info.bg_5{
+	font-size: 62px;
+	.info-patient{
+		height: 165px;
+		.textRoom{
+			font-size: 44px;
+		}
+		.room{
+			width: 309px;
+		}
+	}
+}
+.info.obstetrics{
+	font-size: 66px;
+	.room{
+		width: 429px;
+	}
+	.seeing{
+	    width: 543px;
+	}
+	.waiting{
+	    width: 455px;
+	}
+}
+.info.bg_4{
+	.room:first-child{
+		width: 310px;
+	}
+	.clinique{
+		width: 396px;
+	}
+}
+.pr-15{
+	padding-right: 15px;
+}
+.pl-15{
+	padding-left: 15px;
+}
+page {
+	height: 100%;
+}
+.uni-form-item.uni-form-btn{
+	padding: 0;
+}
+
+.chooseBtn{
+	font-size: 30px;
+	width: 438px;
+}
+.header{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	height: 118px;
+}
+.room{
+	width: 300px;
+}
+.clinique{
+	width: 406px;
+}
+.waiting{
+	width: 320px;
+}
+.seeing{
+	width: 520px;
+	box-sizing: border-box;
+	
+}
+.content {
+	position: relative;
+	height: 100%;
+}
+
+.bg {
+	position: absolute;
+	height: 1080px;
+	width: 1920px;
+	z-index: -1;
+}
+.header-time {
+	display: flex;
+	position: absolute;
+	justify-content: center;
+	flex-direction: column;
+	right: 45px;
+	padding-top: 15px;
+	top: 0px;
+}
+.header-title{
+	color: rgb(253,250,7);
+	font-size: 63px;
+	font-weight: 800;
+	letter-spacing: 12px;
+}
+.header-time view {
+	font-size: 35px;
+	color: #000;
+	letter-spacing:5px;
+}
+.info{
+	padding-top: 207px;
+	padding-left: 35px;
+	padding-right: 35px;
+	font-size: 63px;
+}
+.info-patient {
+	display: flex;
+	height: 208px;
+}
+.info-patient view {
+	font-weight: bold;
+	color: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

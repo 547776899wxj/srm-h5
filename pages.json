@@ -131,6 +131,42 @@
 			}
 		    
 		}
+        ,{
+            "path" : "pages/allBigRoom/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+                "app-plus": {
+                	"titleNView": false //禁用原生导航栏
+                }
+            }
+            
+        }
+        ,{
+            "path" : "pages/gynaecology/gynaecology",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				}
+            }
+            
+        },
+		{
+		    "path" : "pages/allBigRoom/test",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus": {
+		        	"titleNView": false //禁用原生导航栏
+		        }
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
