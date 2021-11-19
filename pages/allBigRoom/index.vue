@@ -3,12 +3,12 @@
 		<image class="bg" :src="styleData.url" ></image>
 		<view class="info" :class="styleData.infoClass" >
 			<view class="info-patient" v-for="(item,index) in data" :key="index">
-				<view class="room" v-if="styleData.infoClass!='obstetrics'" :class="{textRoom:item.deptName.length>5}">{{item.deptName}}</view>
-				<view class="clinique" :class="{textRoom:item.cliniqueName.length>6}">{{item.cliniqueName}}</view>
+				<view class="room" v-if="styleData.infoClass.slice(0,2) == 'bg'" :class="{textRoom:item.deptName.length>5}">{{item.deptName}}</view>
+				<view class="clinique" :class="{textRoom:item.cliniqueName.length>7}">{{item.cliniqueName}}</view>
 				<view class="room">{{item.doctor}}</view>
 				<view class="seeing" style="color: #000099;">
-					<text class="pr-15" v-show="item.callingSeq">{{item.callingSeq}}号</text>
-					<text class="pl-15">{{item.calling}}</text>
+					<text class="pr-15" v-show="item.callingSeq && item.doctor">{{item.callingSeq}}号</text>
+					<text class="pl-15" v-show="item.doctor">{{item.calling}}</text>
 				</view>
 				<view class="waiting" >
 					<text class="pr-15" v-show="item.waitingSeq">{{item.waitingSeq}}号</text>
@@ -42,7 +42,7 @@ export default {
 					iType:'',
 					screenNumber:'',
 					playSound:false,
-					lineNumber:'ebh',
+					lineNumber:'9h',
 				},
 				data:[],
 				voiceData:[],
@@ -58,17 +58,19 @@ export default {
 				//测试数据
 				res: {data:{"reload":"false",
 					"Data":[
-					{"deptCode":"2199","deptName":"临床营养科","cliniqueName":"耳鼻喉耳鼻","cliniqueCode":"5","techTitle":null,"doctor":"吴先杰","doctorPic":"吴先杰","introduction":null,"calling":"eee","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":"下午","status":null},
+					{"deptCode":"2199","deptName":"临床营养科","cliniqueName":"507诊室","cliniqueCode":"5","techTitle":null,"doctor":"吴先杰","doctorPic":"吴先杰","introduction":null,"calling":'就诊中',"callingSeq":"高1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":"下午","status":null},
 				
-					{"deptCode":"2199","deptName":"耳鼻喉耳鼻喉科科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":"吴先杰","doctorPic":"吴先杰","introduction":null,"calling":"tt","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":"下午","status":null}
+					{"deptCode":"2199","deptName":"耳鼻喉耳鼻喉科科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":"吴先杰","doctorPic":"吴先杰","introduction":null,"calling":"tt","callingSeq":"高1002","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":"下午","status":null},
+					
 					],
 					"ServerTime":"2021-01-15 13:00:07"}
 				}
 			};
 		},
 		onLoad() {
-			this.dataPopup.lineNumber = uni.getStorageSync('lineNumber') || 'ebh';
+			this.dataPopup.lineNumber = uni.getStorageSync('lineNumber') || '9h';
 			this.editStyle();
+			
 		},
 		methods:{
 			editStyle(){
@@ -81,8 +83,31 @@ export default {
 				// {name:'男科',value:'andrology'},
 				// {name:'针灸推拿',value:'zjtn'},
 				// {name:'产科',value:'ck'},
-				this.init(this.res);
+				// {name:'老专家',value:'lzj'},
+				// {name:'妇科',value:'fk'},
+				// {name:'传统内科',value:'ctnk'},
 				switch(this.dataPopup.lineNumber) {
+					case 'test':
+						this.styleData = {
+							url:'/static/allRoomBg_8.png',
+							infoClass:'bg_8',
+						}
+						this.init(this.res);
+						break;
+					case 'pfk':
+						this.styleData = {
+							url:'/static/skin.png',
+							infoClass:'skin',
+						}
+						this.skinRequest();
+						break;
+					case 'ctnk':
+						this.styleData = {
+							url:'/static/allRoomBg_7.png',
+							infoClass:'bg_7',
+						}
+						this.traditionalInternalRequest();
+						break;
 					case 'lzj':
 						this.styleData = {
 							url:'/static/allRoomBg_5.png',
@@ -106,8 +131,8 @@ export default {
 						break;
 					case 'andrology':
 						this.styleData = {
-							url:'/static/allRoomBg_5.png',
-							infoClass:'bg_5',
+							url:'/static/andrology.png',
+							infoClass:'andrology',
 						}
 						this.andrologyRequest();
 						break;
@@ -153,6 +178,21 @@ export default {
 						}
 						this.boneInjuryRequest();
 						break;
+					case 'fk':
+						this.styleData = {
+							url:'/static/allRoomBg_8.png',
+							infoClass:'bg_8',
+						}
+						this.gynaecologyRequest();
+						break;
+					case '9h':
+						this.styleData = {
+							url:'/static/allRoomBg_9.png',
+							infoClass:'bg_9',
+						}
+						this.nineLineRequest();
+						break;
+					
 				}
 			},
 			// 打开设置
@@ -172,16 +212,105 @@ export default {
 				this.data = [];
 				this.editStyle();
 			},
-			// repeatRequest(tpyeName){
-			// 	if (this.popupShow || this.dataPopup.lineNumber != tpyeName) {
-			// 		return;
-			// 	}
-			// 	if(tpyeName == 'nk' || tpyeName == 'ck' || tpyeName == 'gsk' || tpyeName == 'pwk'){
-			// 		this.internalRequest(tpyeName);
-			// 	}else{
-			// 		this.init(this.res);
-			// 	}
-			// },
+			nineLineRequest(){
+				if (this.popupShow || this.dataPopup.lineNumber != '9h') {
+					return;
+				}
+				uni.request({
+					url: 'http://129.1.20.21:8019/Queue/getQueueForInternal',
+					method: 'POST',
+					success: res => {
+						try{
+							this.init(res);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.nineLineRequest();
+							}, 6000);
+						}
+					},
+					fail: (err) => {
+						setTimeout(() => {
+							this.nineLineRequest();
+						}, 6000);
+					},
+				});
+			},
+			skinRequest(){
+				if (this.popupShow || this.dataPopup.lineNumber != 'pfk') {
+					return;
+				}
+				uni.request({
+					url: 'http://129.1.20.21:8019/Queue/getQueueForInternal',
+					method: 'POST',
+					success: res => {
+						try{
+							this.init(res);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.skinRequest();
+							}, 6000);
+						}
+					},
+					fail: (err) => {
+						setTimeout(() => {
+							this.skinRequest();
+						}, 6000);
+					},
+				});
+			},
+			// 传统内科
+			traditionalInternalRequest(){
+				if (this.popupShow || this.dataPopup.lineNumber != 'ctnk') {
+					return;
+				}
+				uni.request({
+					url: 'http://129.1.20.21:8019/Queue/getQueueForTradition',
+					method: 'POST',
+					success: res => {
+						try{
+							this.init(res);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.traditionalInternalRequest();
+							}, 6000);
+						}
+					},
+					fail: (err) => {
+						setTimeout(() => {
+							this.traditionalInternalRequest();
+						}, 6000);
+					},
+				});
+			},
+			// 妇科
+			gynaecologyRequest(){
+				console.log('妇科');
+				if (this.popupShow || this.dataPopup.lineNumber != 'fk') {
+					return;
+				}
+				uni.request({
+					url: 'http://129.1.20.21:8019/Queue/getQueueForInternal',
+					method: 'POST',
+					success: res => {
+						try{
+							this.init(res);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.gynaecologyRequest();
+							}, 6000);
+						}
+					},
+					fail: (err) => {
+						setTimeout(() => {
+							this.gynaecologyRequest();
+						}, 6000);
+					},
+				});
+			},
 			// 老专家
 			oldExpertRequest(){
 				if (this.popupShow || this.dataPopup.lineNumber != 'lzj') {
@@ -237,7 +366,25 @@ export default {
 				if (this.popupShow || this.dataPopup.lineNumber != 'zjtn') {
 					return;
 				}
-				this.init(this.res);
+				uni.request({
+					url: 'http://129.1.20.21:8019/Queue/getQueueForInternal',
+					method: 'POST',
+					success: res => {
+						try{
+							this.init(res);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.acupunctureRequest();
+							}, 6000);
+						}
+					},
+					fail: (err) => {
+						setTimeout(() => {
+							this.acupunctureRequest();
+						}, 6000);
+					},
+				});
 			},
 			// 男科
 			andrologyRequest(){
@@ -294,7 +441,25 @@ export default {
 				if (this.popupShow || this.dataPopup.lineNumber != 'jbdx') {
 					return;
 				}
-				this.init(this.res);
+				uni.request({
+					url: 'http://129.1.20.21:8019/Queue/getQueueForInternal',
+					method: 'POST',
+					success: res => {
+						try{
+							this.init(res);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.diseaseRequest();
+							}, 6000);
+						}
+					},
+					fail: (err) => {
+						setTimeout(() => {
+							this.diseaseRequest();
+						}, 6000);
+					},
+				});
 			},
 			// 普外
 			generalSurgeryRequest(){
@@ -401,18 +566,14 @@ export default {
 				let datas = res.data;
 				this.dateText = this.geteDateText(datas.ServerTime);
 				if(datas.reload=='true' || datas.reload==true){
-					this.$tui.webView.postMessage({
-						data: {
-							reload:datas.reload
-						}
-					})
+					location.reload();
 					return;
 				}
 				let dataMaps = [];
 				let dataAudioList = [];
 				let voiceDataInit = [];
 				datas.Data.forEach((item,index) =>{
-					let calling =item.calling?this.$util.hideName(item.calling):'';
+					let calling = (item.calling == '就诊中'? item.calling : this.$util.hideName(item.calling)) || '';
 					let waiting =item.waiting?this.$util.hideName(item.waiting):'';
 					let dataMap = {
 						cliniqueName: item.cliniqueName || '',
@@ -424,9 +585,10 @@ export default {
 						deptName: item.deptName || '',
 					}
 					
-					if(calling){
+					if(calling && calling!='就诊中'){
 						let number = this.$util.chineseNumeral(item.callingSeq+'');
-						let speakText = `请,${number}号,${item.calling}到,${item.deptName}就诊`;
+						let cliniqueName = this.$util.chineseNumeral(item.cliniqueName+'');
+						let speakText = `请${number}号${item.calling}到${cliniqueName}就诊`;
 						if(this.data.length==0){
 							this.voiceData.push(speakText);
 							this.voiceDataInit.push(speakText);
@@ -435,7 +597,7 @@ export default {
 						}
 					}
 					if(this.data.length>0){
-						if(dataMap.cliniqueName && calling == '' && this.data[index]){
+						if(dataMap.cliniqueName && calling == '' && this.data[index] && dataMap.doctor!=''){
 							dataMap.calling = this.data[index].calling;
 							dataMap.callingSeq = this.data[index].callingSeq;
 						}
@@ -496,9 +658,7 @@ export default {
 					if(this.voiceData.length>0){
 						this.voiceQueue()
 					}else{
-						setTimeout(() => {
-							this.editStyle()
-						}, 6000);
+						this.editStyle()
 					}
 				}, date);
 				

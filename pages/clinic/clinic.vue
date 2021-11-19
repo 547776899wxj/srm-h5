@@ -178,7 +178,6 @@ export default {
 			// let datas = [{"DEPT_NAME":"麻醉科","CALLING_SEQ":"5","DEPT_CODE":2241,"CLINIQUE_NAME":"麻醉科门诊","GHHBID":0,"CLINIQUE_CODE":1029,"CALLING":"程爱岩","DOCTOR":"卢希"}]
 			// datas[0].CALLING_SEQ = datas[0].CALLING_SEQ + this.testNubmer++
 			// let dataMaps = [];
-			// let datas = [] ;
 			// if(this.testNubmer>1){
 			// 	datas = []
 			// }

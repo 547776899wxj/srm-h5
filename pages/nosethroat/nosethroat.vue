@@ -23,19 +23,19 @@
 								正在就诊：
 							</view>
 							<view class="details-content">
-								<text class="pr-30">{{item.callingSeq}}</text>
+								<text class="pr-30" v-show="item.callingSeq">{{item.callingSeq}}号</text>
 								<text>{{item.calling}}</text>
 							</view>
 						</view>
-						<view class="waiting">
+						<!-- <view class="waiting">
 							<view class="details-title">
 								等待就诊：
 							</view>
 							<view class="details-content">
-								<text class="pr-30">{{item.waitingSeq}}</text>
+								<text class="pr-30" v-show="item.waitingSeq">{{item.waitingSeq}}号</text>
 								<text>{{item.waiting}}</text>
 							</view>
-						</view>
+						</view> -->
 					</view>
 				</view>
 			</view>
@@ -109,7 +109,7 @@
 				// ],
 				// "ServerTime":"2021-01-15 13:00:07"},
 				// }
-				// // res.data.audioList[0].isReCall = this.testNumber++;
+				// res.data.audioList[0].isReCall = this.testNumber++;
 				// if(this.testNumber++ > 1){
 				// 	console.log("测试");
 				// 	res.data.audioList = [{"deptCode": null,"deptName": null,"cliniqueName": "电子喉镜","cliniqueCode": "1","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": null,"callingSeq": null,"callingPreTime": null,"waiting": null,"waitingSeq": null,"waitingPreTime": null,"amPm": null,"status": null,"isReCall": null},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "中医治疗","cliniqueCode": "747","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "唐凤珍","callingSeq": "2014","callingPreTime": "2021-02-01 16:21:33","waiting": "李嘉妮","waitingSeq": "2015","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "4"},{"deptCode": "2199","deptName": "耳鼻喉科","cliniqueName": "耳内镜、鼻内镜","cliniqueCode": "6","techTitle": null,"doctor": null,"doctorPic": null,"introduction": null,"calling": "林洪燕","callingSeq": "4020","callingPreTime": "2021-02-01 15:57:02","waiting": "林洪燕","waitingSeq": "4020","waitingPreTime": null,"amPm": "下午","status": null,"isReCall": "1"}]
@@ -125,18 +125,14 @@
 							let datas = res.data;
 							this.dateText = this.geteDateText(datas.ServerTime);
 							if(datas.reload=='true' || datas.reload==true){
-								this.$tui.webView.postMessage({
-									data: {
-										reload:datas.reload
-									}
-								})
+								location.reload();
 								return;
 							}
 							let dataMaps = [];
 							let dataAudioList = [];
 							let voiceDataInit = [];
 							datas.Data.forEach(item =>{
-								let calling =item.calling?this.$util.hideName(item.calling):'';
+								let calling = (item.calling == '就诊中' ? item.calling : this.$util.hideName(item.calling)) || '';
 								let waiting =item.waiting?this.$util.hideName(item.waiting):'';
 								dataMaps = dataMaps.concat({
 									cliniqueName: item.cliniqueName || '',
@@ -164,8 +160,8 @@
 										isRecall: isRecall,
 										isisReCallNumber:item.isReCall,
 									});
-									let number = this.$util.chineseNumeral(item.calling+'');
-									let speakText = `请,${item.callingSeq},${item.calling},到${item.cliniqueName}就诊`;
+									let number = this.$util.chineseNumeral(item.callingSeq+'');
+									let speakText = `请,${number},${item.calling},到${item.cliniqueName}就诊`;
 									if(this.audioList.length==0){
 										this.voiceData.push(speakText);
 										this.voiceDataInit.push(speakText);

@@ -1,5 +1,5 @@
 /**
- * 检查间
+ * 消化内镜
  */
 <template>
 	<view class="content" @longpress="open" @click="open">
@@ -19,68 +19,38 @@
 		<view class="info">
 			<view class="info-patient" v-for="(item, index) in data" :key="index">
 				<view class="room">{{ item.room }}</view>
-				<view class="name">
+				<view class="name" style="padding-left: 30px;box-sizing: border-box;">
 					<text class="pr-15" v-if="item.number">{{ item.number }}号</text>
 					<text class="pl-15">{{ item.name }}</text>
 				</view>
-				<view class="name">
-					<text class="pr-15" v-if="item.nextCode">{{ item.nextCode }}号</text>
-					<text class="pl-15">{{ item.nextName }}</text>
+				<view class="name wait" style="font-size: 58px;">
+					<view  v-for="(waitItem, index) in item.waitList" :key="index">
+						<view class="pr-15" v-if="waitItem.number">{{ waitItem.number }}号</view>
+						<view class="pl-15">{{ waitItem.name }}</view>
+					</view>
 				</view>
 				
 			</view>
 		</view>
-		<!-- 媒体查询1280px -->
-		<uni-popup ref="popup" type="center" :maskClick="false">
-			<view class="popup">
-				<view class="popup-header">设置</view>
-				<view>
-					<view class="uni-form-item ">
-						<view class="popup-title">标题：</view>
-						<input class="uni-input" v-model="title" placeholder="请输入标题" />
-					</view>
-					<view class="uni-form-item  uni-form-btn">
-						<view class="popup-title">屏幕：</view>
-						<input class="uni-input" v-model="screenNumber" type="number" placeholder="第一个屏幕输入:1" />
-					</view>
-					<view class="uni-form-item ">
-						<view class="popup-title">声音：</view>
-						<radio-group @change="radioChange" class="radio-group">
-							<label class="uni-list-cell uni-list-cell-pd">
-							    <view>
-							        <radio class="radio" value="false"  :checked="playSound==false"/>
-							    </view>
-							    <view class="popup-title">无</view>
-							</label>
-						    <label class="uni-list-cell uni-list-cell-pd">
-						        <view>
-						            <radio class="radio" value="true" :checked="playSound==true" />
-						        </view>
-						        <view class="popup-title">有</view>
-						    </label>
-						</radio-group>
-					</view>
-					<view class="uni-form-item uni-form-btn"><button type="default" class="chooseBtn" @click="navTo()">选择页面</button></view>
-					
-					<view class="uni-form-item ">
-						<button class="popup-btn" @click="close">取消</button>
-						<button class="popup-btn" @click="confirm">确定</button>
-					</view>
-				</view>
-			</view>
-		</uni-popup>
+		<popupSet ref="popupSet" @confirm="confirm"  @close="close" :dataInit="dataPopup" :showTitle="true"  ></popupSet>
 	</view>
 </template>
 
 <script>
-import uniPopup from '@/components/uni-popup/uni-popup.vue';
+import popupSet from '../../components/popup-set/popup-set.vue';
 // #ifdef APP-PLUS
 	var FvvUniTTS = uni.requireNativePlugin('Fvv-UniTTS');
 // #endif
-
 export default {
+	components: { popupSet },
 	data() {
 		return {
+			dataPopup:{
+				title:'',
+				iType:'',
+				screenNumber:'',
+				playSound:false,
+			},
 			dateText: {
 				year: '',
 				month: '',
@@ -114,10 +84,11 @@ export default {
 			popupShow: false,
 			seqNumber: '',
 			screenNumber: '',
-			playSound:false,
+			playSound:true,
 			voiceDataInit:[],
 			voiceData:[],
-			
+			voicePlayTiems:3,
+			voicePlayNumber:0,
 			test: '测试',
 			testNubmer: 0,
 			reload:false,
@@ -125,9 +96,8 @@ export default {
 		};
 	},
 	onLoad() {
-		this.screenNumber = uni.getStorageSync('screenNumber') || '';
-		this.title = uni.getStorageSync('title') || '';
-		this.playSound = uni.getStorageSync('playSound') || false;
+		// this.title = uni.getStorageSync('title') || '';
+		
 		let date = new Date();
 		this.weekday = new Array(7);
 		this.weekday[0] = '星期日';
@@ -137,63 +107,9 @@ export default {
 		this.weekday[4] = '星期四';
 		this.weekday[5] = '星期五';
 		this.weekday[6] = '星期六';
-		if (this.screenNumber) {
-			this.init();
-		}
+		this.init();
 	},
 	methods: {
-		//初始化room
-		initRoom(){
-			if(this.screenNumber==1){
-				this.data = [
-					{
-						room:'检查室一',
-						number:'',
-						name:'',
-					},{
-						room:'检查室二',
-						number:'',
-						name:'',
-					},{
-						room:'检查室三',
-						number:'',
-						name:'',
-					},{
-						room:'检查室四',
-						number:'',
-						name:'',
-					}
-				]
-			}else{
-				this.data = [
-					{
-						room:'麻醉室一',
-						number:'',
-						name:'',
-					},{
-						room:'麻醉室二',
-						number:'',
-						name:'',
-					},{
-						room:'麻醉室三',
-						number:'',
-						name:'',
-					},{
-						room:'麻醉室四',
-						number:'',
-						name:'',
-					},
-				]
-			}
-		},
-		//选择页面
-		navTo(){
-			uni.setStorageSync('pageSetBoolean',false);
-			this.popupShow = true;
-			uni.redirectTo({
-				url: '../index/index',
-			});
-		},
 		//当前时间
 		newDate(dataTime) {
 			let date = new Date(dataTime);
@@ -206,259 +122,132 @@ export default {
 			};
 		},
 		// 打开设置
-		open() {
-			this.$refs.popup.open();
+		open(){
+			this.$refs.popupSet.open();
 			this.popupShow = true;
 		},
 		// 关闭设置
-		close() {
-			this.$refs.popup.close();
+		close(){
 			this.popupShow = false;
-			if (this.screenNumber) {
-				this.init();
-			}
+			this.init();
 		},
 		//确定设置
-		confirm() {
-			uni.showLoading({
-				title: '加载中'
-			});
-			uni.setStorageSync('playSound', this.playSound);
-			uni.setStorageSync('screenNumber', this.screenNumber);
-			uni.setStorageSync('title', this.title);
+		confirm(res) {
+			this.title = res.title;
 			this.popupShow = false;
-			this.initRoom();
+			this.data = [];
 			this.init();
-			this.$refs.popup.close();
-			uni.hideLoading();
 		},
 		// 初始化数据
 		init() {
 			if (this.popupShow) {
 				return false;
 			}
-			
 			// 测试使用
-			let res = {data:{"Data":[
-			{"ername":"麻醉室二","patientcode":"10-03","patientname":"林新梅","lb":"EDO","call_time":"10:16:23","wait_status":"6","nextName":null,"nextCode":null,"room_name":null,"call_time1":null},
+			// let res = {data:{queueTitle:'妇科疑难病症',"reload": false,"Data": [{"erName": "麻醉室一","patientCode": 123,"patientName": '我喜欢',"lb": "EDO","callTime": null,"waitStatus": null,"waitList": [{"erName": "麻醉室一","patientCode": 123,"patientName": '我喜欢',"lb": "EDO","callTime": null,"waitStatus": null,"waitList": []},{"erName": "麻醉室一","patientCode": 123,"patientName": '我喜欢',"lb": "EDO","callTime": null,"waitStatus": null,"waitList": []}]},{"erName": "麻醉室二","patientCode": "08-12","patientName": "张三","lb": "EDO","callTime": "14:39:09","waitStatus": null,"waitList": [{"erName": "麻醉室二","patientCode": "08-13","patientName": "李四","lb": "EDO","callTime": "14:43:57","waitStatus": "4"},{"erName": "麻醉室二","patientCode": "08-14","patientName": "王五","lb": "EDO","callTime": "14:55:28","waitStatus": "4"}]},{"erName": "麻醉室三","patientCode": null,"patientName": null,"lb": "EDO","callTime": null,"waitStatus": null,"waitList": []},{"erName": "麻醉室四","patientCode": null,"patientName": null,"lb": "EDO","callTime": null,"waitStatus": null,"waitList": []}],
+			// "ServerTime": "2021-04-14 15:43:50"}
+			// }
 			
-			{"ername":"检查室一","patientcode":"10-04","patientname":"潘子敏","lb":"EDO","call_time":"10:16:31","wait_status":"6","nextName":"蒲维奇","nextCode":"14-02","room_name":null,"call_time1":null},
-			
-			{"ername":"检查室三","patientcode":"14-02","patientname":"蒲维奇","lb":"EDO","call_time":"14:42:00","wait_status":"6","nextName":"张秋萍","nextCode":"14-03","room_name":null,"call_time1":null},
-			
-			{"ername":"检查室四","patientcode":"14-03","patientname":"张秋萍","lb":"EDO","call_time":"15:14:27","wait_status":"6","nextName":"","nextCode":"","room_name":null,"call_time1":null}],
-			
-			"ServiceTime":"2020-09-16 10:57:58"}
-			}
-			let datas = res.data.Data;
-			if(res.data.reload=='true' && this.reload!=res.data.reload){
-				this.$tui.webView.postMessage({
-					data: {
-						reload:res.data.reload
+			uni.request({
+				url: 'http://129.1.20.21:8019/Queue/spacsQueue',
+				success: res => {
+					try{
+						let datas = res.data;
+						// #ifdef H5
+							if(datas.reload=='true' || datas.reload==true){
+								location.reload();
+								return;
+							}
+						// #endif
+						let voiceDataInit = [];
+						this.title = res.data.queueTitle || '';
+						let dataMaps = [];
+						this.newDate(res.data.ServerTime);
+						datas.Data.forEach((data, index) => {
+							let name = this.$util.hideName(data.patientName);
+							let waitList = data.waitList.map(item =>{
+								return {
+									name: this.$util.hideName(item.patientName),
+									number: item.patientCode
+								}
+							})
+							let dataMap = {
+								room: data.erName || '',
+								number: data.patientCode||'',	
+								name: name,
+								waitList: waitList
+							};
+							
+							if(name && this.playSound){
+								let number = this.chineseNumeral(dataMap.number+'')||'';
+								number = number?number+'号,':'';
+								let speakText = `请,${number}${data.patientName}到,${dataMap.room},检查`;
+								if(this.data.length==0){
+									this.voiceData.push(speakText);
+									this.voiceDataInit.push(speakText);
+								}else{
+									voiceDataInit = voiceDataInit.concat(speakText);
+								}
+							}
+							dataMaps = dataMaps.concat(dataMap);
+						});
+						this.data = dataMaps;
+						if(this.playSound){
+							if(voiceDataInit.length>0){
+								this.voiceData = this.$util.findDifferentElements(voiceDataInit,this.voiceDataInit);
+								this.voiceDataInit = voiceDataInit;
+							}
+							if(this.voiceData.length>0){
+								this.voiceQueue();	
+							}else{
+								setTimeout(() => {
+									this.init()
+								}, 6000);
+							}
+						}else{
+							setTimeout(() => {
+								this.init();
+							}, 6000);
+						}
+					}catch(e){
+						setTimeout(() => {
+							this.init();
+						}, 6000);
 					}
-				})
-			}
-			this.reload = res.data.reload;
-			let voiceDataInit = [];
-			this.newDate(res.data.ServiceTime);
-			this.initRoom();
-			datas.forEach((data, index) => {
-				let name = this.$util.hideName(data.patientname);
-				let dataMap = {
-					room: data.room_name||data.ername,
-					number: data.patientcode||'',	
-					name: name,
-					nextName:this.$util.hideName(data.nextName),
-					nextCode:data.nextCode,
-				};
-				if(this.screenNumber==1){
-					switch(dataMap.room) {
-						case '检查室一':
-							this.data[0] = dataMap
-							break;
-						case '检查室二':
-							this.data[1] = dataMap
-							break;
-						case '检查室三':
-							this.data[2] = dataMap
-							break;
-						case '检查室四':
-							this.data[3] = dataMap
-							break;
-					} 
-				}else{
-					switch(dataMap.room) {
-						case '麻醉室一':
-							this.data[0] = dataMap
-							break;
-						case '麻醉室二':
-							this.data[1] = dataMap
-							break;
-						case '麻醉室三':
-							this.data[2] = dataMap
-							break;
-						case '麻醉室四':
-							this.data[3] = dataMap
-							break;
-					} 
-				}
-				if(name && this.playSound){
-					let number = this.chineseNumeral(dataMap.number+'')||'';
-					number = number?number+'号,':'';
-					let speakText = `请,${number}${data.patientname}到,${dataMap.room},检查`;
-					if(this.data.length==0){
-						this.voiceData.push(speakText);
-						this.voiceDataInit.push(speakText);
-					}else{
-						voiceDataInit = voiceDataInit.concat(speakText);
-					}
+				},
+				fail: res => {
+					uni.showToast({
+						title: '请求失败',
+						icon: 'none'
+					});
+					setTimeout(() => {
+						this.init();
+					}, 6000);
 				}
 			});
-			if(this.playSound){
-				if(voiceDataInit.length>0){
-					this.voiceData = this.$util.findDifferentElements(voiceDataInit,this.voiceDataInit);
-					this.voiceDataInit = voiceDataInit;
-				}
-				if(this.voiceData.length>0){
-					this.voiceQueue();	
-				}else{
-					setTimeout(() => {
-						this.init()
-					}, 5000);
-				}
-			}else{
-				setTimeout(() => {
-					this.init();
-				}, 5000);
-			}
-			// uni.request({
-			// 	url: 'http://129.1.20.21:8019/Queue/MZ_Get_Queue',
-			// 	data: {
-			// 		roomNameType: this.screenNumber,
-			// 	},
-			// 	timeout: 3000,
-			// 	success: res => {
-			// 		let datas = res.data.Data;
-			// 		if(res.data.reload=='true' && this.reload!=res.data.reload){
-			// 			this.$tui.webView.postMessage({
-			// 				data: {
-			// 					reload:res.data.reload
-			// 				}
-			// 			})
-			// 		}
-			// 		this.reload = res.data.reload;
-			// 		let voiceDataInit = [];
-			// 		this.newDate(res.data.ServiceTime);
-			// 		this.initRoom();
-			// 		datas.forEach((data, index) => {
-			// 			let name = this.$util.hideName(data.patientname);
-			// 			let dataMap = {
-			// 				room: data.room_name||data.ername,
-			// 				number: data.patientcode||'',	
-			// 				name: name,
-			// 				nextName:this.$util.hideName(data.nextName),
-			// 				nextCode:data.nextCode,
-			// 			};
-			// 			if(this.screenNumber==1){
-			// 				switch(dataMap.room) {
-			// 					case '检查室一':
-			// 						this.data[0] = dataMap
-			// 						break;
-			// 					case '检查室二':
-			// 						this.data[1] = dataMap
-			// 						break;
-			// 					case '检查室三':
-			// 						this.data[2] = dataMap
-			// 						break;
-			// 					case '检查室四':
-			// 						this.data[3] = dataMap
-			// 						break;
-			// 				} 
-			// 			}else{
-			// 				switch(dataMap.room) {
-			// 					case '麻醉室一':
-			// 						this.data[0] = dataMap
-			// 						break;
-			// 					case '麻醉室二':
-			// 						this.data[1] = dataMap
-			// 						break;
-			// 					case '麻醉室三':
-			// 						this.data[2] = dataMap
-			// 						break;
-			// 					case '麻醉室四':
-			// 						this.data[3] = dataMap
-			// 						break;
-			// 				} 
-			// 			}
-			// 			if(name && this.playSound){
-			// 				let number = this.chineseNumeral(dataMap.number+'')||'';
-			// 				number = number?number+'号,':'';
-			// 				let speakText = `请,${number}${data.patientname}到,${dataMap.room},检查`;
-			// 				if(this.data.length==0){
-			// 					this.voiceData.push(speakText);
-			// 					this.voiceDataInit.push(speakText);
-			// 				}else{
-			// 					voiceDataInit = voiceDataInit.concat(speakText);
-			// 				}
-			// 			}
-			// 		});
-			// 		if(this.playSound){
-			// 			if(voiceDataInit.length>0){
-			// 				this.voiceData = this.$util.findDifferentElements(voiceDataInit,this.voiceDataInit);
-			// 				this.voiceDataInit = voiceDataInit;
-			// 			}
-			// 			if(this.voiceData.length>0){
-			// 				this.voiceQueue();	
-			// 			}else{
-			// 				setTimeout(() => {
-			// 					this.init()
-			// 				}, 5000);
-			// 			}
-			// 		}else{
-			// 			setTimeout(() => {
-			// 				this.init();
-			// 			}, 5000);
-			// 		}	
-					
-			// 	},
-			// 	fail: res => {
-			// 		uni.showToast({
-			// 			title: '请求失败',
-			// 			icon: 'none'
-			// 		});
-			// 		setTimeout(() => {
-			// 			this.init();
-			// 		}, 5000);
-			// 	}
-			// });
 		},
 		// 语音队列
 		voiceQueue(){
-			// #ifdef APP-PLUS
-				FvvUniTTS.init((callback) => {
-					console.log(this.voiceData[0]);
-					FvvUniTTS.speak({
-						text:this.voiceData[0]
-					});
-				});
-			// #endif
+			let text = this.voiceData[0]; 
+			console.log(text);
 			// #ifdef H5
 				this.$tui.webView.postMessage({
 					data: {
-						text:res.data.reload
+						text:text
 					}
 				})
+			// #endif
+			// #ifdef APP-PLUS
+				FvvUniTTS.init((callback) => {
+					FvvUniTTS.speak({
+						text:text
+					});
+				});
 			// #endif
 			if(this.voiceData.length>1){
 				this.onDone(this.voiceData[1]);
 			}else{
-				let date = 4300;
-				if(this.voiceData[0].length>12){
-					date = date + ((this.voiceData[0].length - 12)*300 ) 
-				}
-				setTimeout(() => {
-					this.init()
-				}, date);
+				this.onDone(this.voiceData[0]);
 			}
 		},
 		// 播放完执行
@@ -467,19 +256,21 @@ export default {
 			if(data.length>12){
 				date = date + ((data.length - 12)*300 ) 
 			}
-			console.log("onDone");
 			setTimeout(() => {
-				this.voiceData.shift();
+				this.voicePlayNumber++;
+				if(this.voicePlayNumber>=this.voicePlayTiems){
+					this.voiceData.shift();
+					this.voicePlayNumber = 0;
+				}
 				if(this.voiceData.length>0){
 					this.voiceQueue()
 				}else{
-					setTimeout(() => {
-						this.init()
-					}, 5000);
+					this.init();
 				}
 			}, date);
 			
 		},
+
 		//转大写
 		chineseNumeral(data){
 			let tmpnewchar = "" ;
@@ -502,20 +293,13 @@ export default {
 		},
 		
 		
-		//声音设置
-		radioChange(evt) {
-			if(evt.target.value=='true'){
-				this.playSound = true;
-			}else{
-				this.playSound = false;
-			}
-		},
+		
 		
 	}
 };
 </script>
 
-<style>
+<style lang="scss">
 .pr-15 {
 	padding-right: 15px;
 }
@@ -582,9 +366,11 @@ page {
 }
 .header-title {
 	color: rgb(253, 250, 7);
-	font-size: 63px;
+	font-size: 60px;
 	font-weight: 800;
 	letter-spacing: 12px;
+	    width: 700px;
+	    text-align: center;
 }
 .header-time view {
 	font-size: 35px;
@@ -599,12 +385,13 @@ page {
 .info-patient {
 	display: flex;
 	height: 201px;
+	font-size: 63px;
 }
 .name {
 	width: 735px;
 }
 .info-patient view {
-	font-size: 60px;
+	
 	color: #000;
 	display: flex;
 	align-items: center;
@@ -622,6 +409,10 @@ page {
 	background-color: rgb(68, 114, 196);
 	margin-left: 40px;
 	margin-right: 40px;
+}
+.name.wait{
+	flex-direction: column;
+	
 }
 .popup {
 	background-color: #fff;

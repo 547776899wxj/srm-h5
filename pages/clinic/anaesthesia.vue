@@ -1,6 +1,7 @@
+<!-- 麻醉门诊 安卓4-->
 <template>
 	<view class="content"  @longpress="open" @click="open">
-		<image class="bg" src="/static/clinic.png" ></image>
+		<image class="bg" src="/static/anaesthesia.png" ></image>
 		<view class="header">
 			<view class="header-title">{{title}}</view>
 			<view class="header-time">
@@ -17,14 +18,13 @@
 			<view class="info-patient" v-for="(item,index) in data" :key="index">
 				<view class="room">{{item.cliniqueName}}</view>
 				<!-- <view class="doctor">{{item.doctor}}</view> -->
-				<view class="seeing" style="color: #ffa500; padding-left: 100px;">
+				<view class="seeing" style="color: #ffa500; ">
 					<text class="pr-15" v-show="item.callingSeq">{{item.callingSeq}}号</text>
 					<text class="pl-15">{{item.calling}}</text>
 				</view>
-				<view class="seeing" style="padding-left: 60px;">
+				<!-- <view class="seeing" style="padding-left: 60px;">
 					<text class="pr-15" v-show="item.waitingSeq">{{item.waitingSeq}}号</text>
-					<!-- <text class="pl-15">{{item.waiting}}</text> -->
-				</view>
+				</view> -->
 			</view>
 		</view>
 		<popupSet ref="popupSet" @confirm="confirm" iTypeText="诊室" @close="close" :dataInit="dataPopup"></popupSet>
@@ -271,15 +271,17 @@ page {
 	height: 118px;
 }
 .room{
-	width: 490px;
+	width: 45%;
+	position: relative;
+	left: 57px;
 }
 .doctor{
 	width: 420px;
 }
 .seeing{
-	width: 673px;
+	width: 55%;
 	box-sizing: border-box;
-	
+	padding-right: 200px;
 }
 .content {
 	position: relative;
@@ -323,7 +325,7 @@ page {
 	justify-content: space-around;
 }
 .info-patient view {
-	font-size: 57px;
+	font-size: 65px;
 	font-weight: bold;
 	color: #000;
 	display: flex;

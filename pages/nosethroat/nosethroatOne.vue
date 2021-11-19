@@ -23,19 +23,19 @@
 								正在就诊：
 							</view>
 							<view class="details-content">
-								<text class="pr-30">{{item.callingSeq}}</text>
+								<text class="pr-30" v-show="item.callingSeq">{{item.callingSeq}}号</text>
 								<text>{{item.calling}}</text>
 							</view>
 						</view>
-						<view class="waiting">
+						<!-- <view class="waiting">
 							<view class="details-title">
 								等待就诊：
 							</view>
 							<view class="details-content">
-								<text class="pr-30">{{item.waitingSeq}}</text>
+								<text class="pr-30" v-show="item.waitingSeq">{{item.waitingSeq}}号</text>
 								<text>{{item.waiting}}</text>
 							</view>
-						</view>
+						</view> -->
 					</view>
 				</view>
 			</view>
@@ -124,11 +124,7 @@
 							let datas = res.data;
 							this.dateText = this.geteDateText(datas.ServerTime);
 							if(datas.reload=='true' || datas.reload==true){
-								this.$tui.webView.postMessage({
-									data: {
-										reload:datas.reload
-									}
-								})
+								location.reload();
 								return;
 							}
 							let dataMaps = [];
@@ -156,8 +152,8 @@
 									isisReCallNumber:item.isReCall,
 								});
 								if(item.calling && this.playSound){
-									let number = this.$util.chineseNumeral(item.calling+'');
-									let speakText = `请,${item.callingSeq},${item.calling},到${item.cliniqueName}就诊`;
+									let number = this.$util.chineseNumeral(item.callingSeq+'');
+									let speakText = `请,${number},${item.calling},到${item.cliniqueName}就诊`;
 									if(this.data.length==0){
 										this.voiceData.push(speakText);
 										this.voiceDataInit.push(speakText);

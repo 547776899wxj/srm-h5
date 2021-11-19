@@ -37,6 +37,15 @@
 			}
 		},
 		{
+		    "path" : "pages/check/checkNew",
+		    "style" : {
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				}
+			}
+		},
+		{
 		    "path" : "pages/ready/ready",
 		    "style" : {
 				"navigationBarTitleText": "",
@@ -45,16 +54,6 @@
 				}
 			}
 		}
-		
-        ,{
-            "path" : "pages/clinic/clinicPortrait",
-           "style" : {
-           	"navigationBarTitleText": "",
-           	"app-plus": {
-           		"titleNView": false //禁用原生导航栏
-           	}
-           }
-        }
         ,{
             "path" : "pages/ultrasonic/ultrasonic",
             "style" : {
@@ -166,6 +165,28 @@
 		        }
 		    }
 		    
+		}
+        ,{
+            "path" : "pages/ct/ct",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				}
+            }
+        },
+		{
+		    "path" : "pages/xray/xray",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏
+				}
+		    }
 		}
     ],
 	"globalStyle": {

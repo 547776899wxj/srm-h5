@@ -73,6 +73,11 @@ export default {
 				{name:'针灸推拿',value:'zjtn'},
 				{name:'产科',value:'ck'},
 				{name:'老专家',value:'lzj'},
+				{name:'妇科',value:'fk'},
+				{name:'传统内科',value:'ctnk'},
+				{name:'皮肤科',value:'pfk'},
+				{name:'9行',value:'9h'},
+				{name:'测试',value:'test'},
 			],
 		};
 	},
@@ -86,7 +91,7 @@ export default {
 					iType:'',
 					screenNumber:'',
 					playSound:false,
-					lineNumber:'ebh',
+					lineNumber:'9h',
 				}
 			}
 		},
@@ -114,7 +119,6 @@ export default {
 			type: Boolean,
 			default: false
 		},
-		// 声音
 		showChoseLine:{
 			type: Boolean,
 			default: false
@@ -150,7 +154,6 @@ export default {
 			this.$tui.webView.redirectTo({
 				url: '../index/index?webView=true',
 			})
-			
 		},
 		//声音设置
 		radioChange(evt) {

@@ -2,30 +2,34 @@
 	<view>
 		<view class="content"  @longpress="open" @click="open">
 			<image class="bg" src="/static/fuke_bg.png" ></image>
-			<view class="header">
-				妇科肿瘤专病门诊
-			</view>
-			<view class="doctor">
-				<view class="doctor-top">
-					<image class="doctor-img" src="../../static/test.jpeg" mode=""></image>
-					<view class="title">
-						<view class="doctor-name">林庄儿</view>
-						<view class="doctor-title">副主任医师</view>
+			<view v-if="data">
+				<view class="header">
+					{{title}}
+				</view>
+				<view class="doctor">
+					<view class="doctor-top">
+						<view class="doctor-img">
+							<image class="image" v-show="doctor.doctorPicture && doctor.doctorName" :src="doctor.doctorPicture" mode=""></image>
+						</view>
+						<view class="title">
+							<view class="doctor-name">{{doctor.doctorName}}</view>
+							<view class="doctor-title">{{doctor.doctorTitle}}</view>
+						</view>
+					</view>
+					<view class="doctor-info" >
+						<view style="height: 160px;overflow: hidden;" v-if="doctor.doctorInfo">擅长：{{doctor.doctorInfo}}</view>
+						<view style="height: 90px;overflow: hidden;"  v-if="doctor.doctorScheduling">坐诊时间：{{doctor.doctorScheduling}}</view>
 					</view>
 				</view>
-				<view class="doctor-info">
-					<view class="">擅长：我把这心思去跟一位擅长丹青的同志商量,求她画。我把这心思去跟一位擅长丹青的同志商量,求她画。</view>
-					<view class="">坐诊时间：周一、二、三、四</view>
-				</view>
-			</view>
-			<view class="data">
-				<view class="data-item">
-					<text style="margin-right: 50px;">47号</text>
-					<text>吴先杰</text>
-				</view>
-				<view class="data-item">
-					<text style="margin-right: 50px;">47号</text>
-					<text>吴先杰</text>
+				<view class="data">
+					<view class="data-item">
+						<text style="margin-right: 50px;" v-show="data.callingSeq">{{data.callingSeq}}号</text>
+						<text>{{data.calling}}</text>
+					</view>
+					<view class="data-item">
+						<text style="margin-right: 50px;"  v-show="data.waitingSeq">{{data.waitingSeq}}号</text>
+						<text>{{data.waiting}}</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -40,6 +44,7 @@
 		data() {
 			return {
 				iType:'',
+				title:'',
 				screenNumber:'',
 				popupShow:false,
 				dateText: {
@@ -48,6 +53,8 @@
 					date: '',
 					day: '',
 					time: ''
+				},
+				doctor:{
 				},
 				dataPopup:{
 					title:'',
@@ -85,154 +92,45 @@
 				
 			},
 			init(){
-				
-				let res = {data:{"reload":"false",
-					"Data":[
-					{"deptCode":"2199","deptName":"耳鼻喉耳鼻","cliniqueName":"内镜一","cliniqueCode":"5","techTitle":null,"doctor":"吴先杰","doctorPic":"吴先杰","introduction":null,"calling":"eee","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:52","waiting":"eee","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:52","amPm":"下午","status":null},
-				
-					{"deptCode":"2199","deptName":"耳鼻喉耳鼻喉科科","cliniqueName":"纤维鼻咽喉镜室","cliniqueCode":"1","techTitle":null,"doctor":"吴先杰","doctorPic":"吴先杰","introduction":null,"calling":"tt","callingSeq":"1001","callingPreTime":"2021-01-15 12:37:42","waiting":"tt","waitingSeq":"1001","waitingPreTime":"2021-01-15 12:37:42","amPm":"下午","status":null}
-					],
-					"ServerTime":"2021-01-15 13:00:07"}
-				}
-				this.data = res.Data[0];
-				//测试----------------------------------------------------------------------------------------------------------------------------------------
-				
-				// uni.request({	
-				// 	url: 'http://129.1.20.21:8019/Queue/getNosethroat',
-				// 	method: 'POST',
-				// 	success: res => {
-				// 		try{
-				// 			let datas = res.data;
-				// 			if(datas.reload=='true' || datas.reload==true){
-				// 				this.$tui.webView.postMessage({
-				// 					data: {
-				// 						reload:datas.reload
-				// 					}
-				// 				})
-				// 				return;
-				// 			}
-				// 			let dataMaps = [];
-				// 			let dataAudioList = [];
-				// 			let voiceDataInit = [];
-				// 			datas.Data.forEach(item =>{
-				// 				let calling =item.calling?this.$util.hideName(item.calling):'';
-				// 				let waiting =item.waiting?this.$util.hideName(item.waiting):'';
-				// 				dataMaps = dataMaps.concat({
-				// 					cliniqueName: item.cliniqueName || '',
-				// 					calling: calling,
-				// 					callingSeq: item.callingSeq || '',
-				// 					waiting: waiting,
-				// 					waitingSeq: item.waitingSeq || '',
-				// 				});
-								
-				// 			})
-				// 			console.log(datas);
-				// 			// 语音
-				// 			datas.audioList.forEach(item =>{
-				// 				let isRecall = false;
-				// 				if(item.isReCall > 0){
-				// 					this.audioList.forEach((oldItem,index) =>{
-				// 						if(oldItem.callingSeq == item.callingSeq && item.isReCall > oldItem.isisReCallNumber){
-				// 							isRecall = true;
-				// 						}
-				// 					})
-				// 				}
-				// 				if(item.callingSeq){
-				// 					dataAudioList = dataAudioList.concat({
-				// 						callingSeq: item.callingSeq || '',
-				// 						isRecall: isRecall,
-				// 						isisReCallNumber:item.isReCall,
-				// 					});
-				// 					let number = this.$util.chineseNumeral(item.calling+'');
-				// 					let speakText = `请,${item.callingSeq},${item.calling},到${item.cliniqueName}就诊`;
-				// 					if(this.audioList.length==0){
-				// 						this.voiceData.push(speakText);
-				// 						this.voiceDataInit.push(speakText);
-				// 					}else{
-				// 						voiceDataInit = voiceDataInit.concat(speakText);
-				// 					}
-				// 				}
-				// 			})
-				// 			if(voiceDataInit.length>0){
-				// 				this.voiceData = this.$util.findDifferentElements(voiceDataInit,this.voiceDataInit);
-				// 				dataAudioList.forEach((item, index) => {
-				// 					if(item.isRecall){
-				// 						this.voiceData.unshift(voiceDataInit[index])
-				// 					}
-				// 				})
-				// 				this.voiceDataInit = voiceDataInit;
-				// 			}
-				// 			this.data = dataMaps;
-				// 			this.audioList = dataAudioList;
-				// 			if(this.voiceData.length>0){
-				// 				this.voiceQueue();	
-				// 			}else{
-				// 				setTimeout(() => {
-				// 					this.init()
-				// 				}, 6000);
-				// 			}
-				// 		}catch(e){
-				// 			console.error(e);
-				// 			setTimeout(() => {
-				// 				this.init();
-				// 			}, 6000);
-				// 		}
+				// let res = {data:{queueTitle:'妇科疑难病症，微创手术专病门诊',"doctor": {"doctorScheduling":'星期一星期一星期一星期一星期一星期',"doctorId": 1,"doctorName": '测试',"doctorTitle": '宇宙第一',"doctorPicture": '../../static/test.jpeg',"doctorInfo": '士大夫哈时代峰峻暗红士大夫哈时代峰'},"reload": false,"Data": {"deptCode": "2142","deptName": "心血管科","cliniqueName": "212诊室","cliniqueCode": "510","doctor": "刘建忠","calling": '就诊中',"callingSeq": null,"waiting": "陈六金","waitingSeq": "11","checking": "林永贞","checkingSeq": "高72"},"ServerTime": "2021-04-06 15:01:48"}}
+				// 测试----------------------------------------------------------------------------------------------------------------------------------------
+				uni.request({	
+					url: 'http://129.1.20.21:8019/Queue/getSmallQueue',
+					method: 'POST',
+					success: res => { 
+						try{
+							if(res.data.reload=='true' || res.data.reload==true){
+								location.reload();
+								return;
+							}
+							this.title = res.data.queueTitle || '';
+							this.doctor = res.data.doctor;
+							let data = res.data.Data;
+							if(data.calling){
+								data.calling = (data.calling == '就诊中' ? data.calling : this.$util.hideName(data.calling)) || '';
+							}else{
+								data.calling = this.date.calling;
+							}
+							data.waiting = data.waiting?this.$util.hideName(data.waiting):'';
+							console.log(data);
+							this.data = data;
+							setTimeout(() => {
+								this.init();
+							}, 6000);
+						}catch(e){
+							console.error(e);
+							setTimeout(() => {
+								this.init();
+							}, 6000);
+						}
 						
-				// 	},
-				// 	fail: (err) => {
-				// 		setTimeout(() => {
-				// 			this.init();
-				// 		}, 6000);
-				// 	},
-				// });
-			},
-			geteDateText(dataTime){
-				let date = new Date(dataTime);
-				let weekday = [ '星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
-				return {
-					year: date.getFullYear(),
-					month: date.getMonth() + 1,
-					date: date.getDate(),
-					day: weekday[date.getDay()],
-					time: date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-				};
-			},
-			// 语音队列
-			voiceQueue(){
-				let text = this.voiceData[0]; 
-				console.log(text);
-				this.$tui.webView.postMessage({
-					data: {
-						text:text
-					}
-				})
-				if(this.voiceData.length>1){
-					this.onDone(this.voiceData[1]);
-				}else{
-					this.onDone(this.voiceData[0]);
-				}
-			},
-			// 播放完执行
-			onDone(data){
-				let date = 4300;
-				if(data.length>12){
-					date = date + ((data.length - 12)*300 ) 
-				}
-				setTimeout(() => {
-					this.voicePlayNumber++;
-					if(this.voicePlayNumber>=this.voicePlayTiems){
-						this.voiceData.shift();
-						this.voicePlayNumber = 0;
-					}
-					if(this.voiceData.length>0){
-						this.voiceQueue()
-					}else{
+					},
+					fail: (err) => {
 						setTimeout(() => {
-							this.init()
+							this.init();
 						}, 6000);
-					}
-				}, date);
-				
+					},
+				});
 			},
 		}
 	}
@@ -259,6 +157,10 @@
 			width: 196px;
 			height: 284px;
 			margin-left: 32px;
+			.image{
+				width: 196px;
+				height: 284px;
+			}
 		}
 		.title{
 			display: flex;
@@ -269,16 +171,16 @@
 		.doctor-name{
 			margin-top: 40px;
 			margin-bottom: 30px;
-			font-size: 70px;
+			font-size: 75px;
 		}
 		.doctor-title{
-			font-size: 45px;
+			font-size: 50px;
 		}
 		
 	}
 	.doctor-info{
 		text-indent: 50px;
-		font-size: 22px;
+		font-size: 28px;
 		letter-spacing: 3px;
 		line-height: 1.5;
 		margin-top: 15px;
@@ -302,9 +204,11 @@
 .header{
 	text-align: center;
     color: #fbf803;
-    font-size: 65px;
+    font-size: 70px;
     height: 185px;
-    line-height: 185px;
 	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>

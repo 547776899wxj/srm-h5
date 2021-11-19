@@ -49,6 +49,27 @@
 	
 	}
 }
+.info.bg_9{
+	font-size: 53px;
+	padding-top: 142px;
+	.info-patient{
+		height: 99px;
+		.room:first-child{
+			box-sizing: border-box;
+			padding-left: 20px;
+		}
+		.textRoom{
+			font-size: 35px;
+		}
+		.clinique{
+			width: 420px;
+		}
+		.seeing{
+			width: 510px;
+			
+		}
+	}
+}
 .info.bg_8{
 	font-size: 55px;
 	padding-top: 156px;
@@ -84,6 +105,38 @@
 }
 .info.obstetrics{
 	font-size: 66px;
+	.room{
+		width: 429px;
+	}
+	.seeing{
+	    width: 543px;
+	}
+	.waiting{
+	    width: 455px;
+	}
+}
+.info.andrology{
+	.info-patient{
+		height: 166px;
+	}
+	font-size: 64px;
+	.room{
+		width: 429px;
+	}
+	.seeing{
+	    width: 543px;
+	}
+	.waiting{
+	    width: 455px;
+	}
+}
+.info.skin{
+	padding-top: 143px;
+	font-size: 55px;
+	.info-patient{
+		height:99px;
+	}
+	
 	.room{
 		width: 429px;
 	}

@@ -18,9 +18,13 @@
 		
 		<popupSet ref="popupSet" @confirm="confirm"  @close="close" :dataInit="dataPopup" :showChoseLine="true"></popupSet>
 	</view> -->
-	<view class="content">
+	<view class="content" @longpress="open" @click="open">
 		<image class="bg" :src="styleData.url" ></image>
+		<popupSet ref="popupSet" @confirm="confirm"  @close="close" :dataInit="dataPopup" :showChoseLine="true"></popupSet>
 		<button type="default" @click="test()" style="position: relative;left: 0;">测试</button>
+		<button type="default" @click="test()" style="position: relative;left: 0;">测试</button>
+		<button type="default" @click="test()" style="position: relative;left: 0;">测试</button>
+		<button type="default" @click="test()" style="position: relative;left: 0;">更新</button>
 	</view>
 </template>
 
@@ -77,11 +81,8 @@ export default {
 		},
 		methods:{
 			test(){
-				this.$tui.webView.postMessage({
-					data: {
-						reload:true
-					}
-				})
+				location.reload();
+				
 			},
 			editStyle(){
 				// {name:'耳鼻喉',value:'ebh'},
